@@ -9,8 +9,8 @@ export interface GlassFilterProps {
   id: string
   displacementScale: number
   aberrationIntensity: number
-  width: number
-  height: number
+  width: number | string
+  height: number | string
   mode: GlassMode
   shaderMapUrl?: string
 }

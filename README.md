@@ -35,7 +35,7 @@ Apple's Liquid Glass effect for Vue 3.
 ### Installation
 
 ```bash
-npm install liquid-glass-vue
+npm install @wxperia/liquid-glass-vue
 ```
 
 ### Basic Usage
