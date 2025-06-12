@@ -132,6 +132,7 @@ When you want the glass effect to respond to mouse movement over a larger area (
 | `mode`                | `"standard" \| "polar" \| "prominent" \| "shader"` | `"standard"`  | Refraction mode for different visual effects. `shader` is the most accurate but not the most stable. |
 | `globalMousePos`      | `{ x: number; y: number }`                         | -             | Global mouse position coordinates for manual control                                                 |
 | `mouseOffset`         | `{ x: number; y: number }`                         | -             | Mouse position offset for fine-tuning positioning                                                    |
+| `effect`              | `"flowingLiquid" \| "liquidGlass" \| "transparentIce" \| "unevenGlass" \| "mosaicGlass"` | `"liquidGlass"` | Shader effect type, only works when mode is "shader" |
 
 ## Events
 
