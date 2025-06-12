@@ -9,8 +9,8 @@ export interface GlassFilterProps {
   id: string
   displacementScale: number
   aberrationIntensity: number
-  width: number | string
-  height: number | string
+  width: number
+  height: number
   mode: GlassMode
   shaderMapUrl?: string
 }
@@ -31,7 +31,7 @@ export interface GlassContainerProps {
   overLight?: boolean
   cornerRadius?: number
   padding?: string
-  glassSize?: { width: number | string; height: number | string }
+  glassSize?: { width: number; height: number }
   onClick?: () => void
   mode?: GlassMode
 }
