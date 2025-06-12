@@ -1,6 +1,6 @@
 {
   "name": "liquid-glass-vue",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Apple's Liquid Glass effect for Vue 3. Based on the original liquid-glass-react library.",
   "keywords": [
     "vue",
