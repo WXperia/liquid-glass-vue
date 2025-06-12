@@ -10,7 +10,7 @@ Apple's Liquid Glass effect for Vue 3.
 
 ## 🎬 Demo
 
-[Click here](https://liquid-glass.maxrovensky.com) to see it in action!
+[Click here](https://liquid-glass-vue.netlify.app/) to see it in action!
 
 ![project liquid gif](./assets/project-liquid.gif)
 
