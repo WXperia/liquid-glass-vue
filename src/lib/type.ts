@@ -31,7 +31,7 @@ export interface GlassContainerProps {
   overLight?: boolean
   cornerRadius?: number
   padding?: string
-  glassSize?: { width: number; height: number }
+  glassSize?: { width: number | string; height: number | string }
   onClick?: () => void
   mode?: GlassMode
 }

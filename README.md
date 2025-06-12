@@ -1,45 +1,147 @@
-# liquid-glass-vue
+# Liquid Glass Vue
 
-This template should help get you started developing with Vue 3 in Vite.
+Apple's Liquid Glass effect for Vue 3.
 
-## Recommended IDE Setup
+> **📝 Note:** This Vue implementation is based on the original [liquid-glass-react](https://github.com/rdev/liquid-glass-react) library. All core effects and algorithms have been adapted from the React version to work with Vue 3's Composition API.
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+|                                Card Example                                |                                Button Example                                |
+| :------------------------------------------------------------------------: | :--------------------------------------------------------------------------: |
+| ![](https://github.com/rdev/liquid-glass-react/raw/master/assets/card.png) | ![](https://github.com/rdev/liquid-glass-react/raw/master/assets/button.png) |
 
-## Type Support for `.vue` Imports in TS
+## 🎬 Demo
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+[Click here](https://liquid-glass.maxrovensky.com) to see it in action!
 
-## Customize configuration
+![project liquid gif](./assets/project-liquid.gif)
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+## ✨ Features
 
-## Project Setup
+- Proper edgy bending and refraction
+- Multiple refraction modes
+- Configurable frosty level
+- Supports arbitrary child elements
+- Configurable paddings
+- Correct hover and click effects
+- Edges and highlights take on the underlying light like Apple's does
+- Configurable chromatic aberration
+- Configurable elasticity, to mimic Apple's "liquid" feel
+- Full Vue 3 support with Composition API
+- TypeScript support
 
-```sh
-npm install
+> **⚠️ NOTE:** Safari and Firefox only partially support the effect (displacement will not be visible)
+
+## 🚀 Usage
+
+### Installation
+
+```bash
+npm install liquid-glass-vue
 ```
 
-### Compile and Hot-Reload for Development
+### Basic Usage
 
-```sh
-npm run dev
+```vue
+<script setup lang="ts">
+  import { LiquidGlass } from 'liquid-glass-vue'
+</script>
+
+<template>
+  <LiquidGlass>
+    <div class="p-6">
+      <h2>Your content here</h2>
+      <p>This will have the liquid glass effect</p>
+    </div>
+  </LiquidGlass>
+</template>
 ```
 
-### Type-Check, Compile and Minify for Production
+### Button Example
 
-```sh
-npm run build
+```vue
+<script setup lang="ts">
+  import { LiquidGlass } from 'liquid-glass-vue'
+
+  const handleClick = () => {
+    console.log('Button clicked!')
+  }
+</script>
+
+<template>
+  <LiquidGlass
+    :displacement-scale="64"
+    :blur-amount="0.1"
+    :saturation="130"
+    :aberration-intensity="2"
+    :elasticity="0.35"
+    :corner-radius="100"
+    padding="8px 16px"
+    @click="handleClick"
+  >
+    <span class="text-white font-medium">Click Me</span>
+  </LiquidGlass>
+</template>
 ```
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
+### Mouse Container Example
 
-```sh
-npm run test:unit
+When you want the glass effect to respond to mouse movement over a larger area (like a parent container), use the `mouseContainer` prop:
+
+```vue
+<script setup lang="ts">
+  import { ref } from 'vue'
+  import { LiquidGlass } from 'liquid-glass-vue'
+
+  const containerRef = ref<HTMLDivElement>()
+</script>
+
+<template>
+  <div
+    ref="containerRef"
+    class="w-full h-screen bg-image"
+  >
+    <LiquidGlass
+      :mouse-container="containerRef"
+      :elasticity="0.3"
+      :style="{ position: 'fixed', top: '50%', left: '50%' }"
+    >
+      <div class="p-6">
+        <h2>Glass responds to mouse anywhere in the container</h2>
+      </div>
+    </LiquidGlass>
+  </div>
+</template>
 ```
 
-### Lint with [ESLint](https://eslint.org/)
+## Props
 
-```sh
-npm run lint
-```
+| Prop                  | Type                                               | Default       | Description                                                                                          |
+| --------------------- | -------------------------------------------------- | ------------- | ---------------------------------------------------------------------------------------------------- |
+| `displacementScale`   | `number`                                           | `70`          | Controls the intensity of the displacement effect                                                    |
+| `blurAmount`          | `number`                                           | `0.0625`      | Controls the blur/frosting level                                                                     |
+| `saturation`          | `number`                                           | `140`         | Controls color saturation of the glass effect                                                        |
+| `aberrationIntensity` | `number`                                           | `2`           | Controls chromatic aberration intensity                                                              |
+| `elasticity`          | `number`                                           | `0.15`        | Controls the "liquid" elastic feel (0 = rigid, higher = more elastic)                                |
+| `cornerRadius`        | `number`                                           | `999`         | Border radius in pixels                                                                              |
+| `class`               | `string`                                           | `""`          | Additional CSS classes                                                                               |
+| `padding`             | `string`                                           | `"24px 32px"` | CSS padding value                                                                                    |
+| `style`               | `CSSProperties`                                    | -             | Additional inline styles                                                                             |
+| `overLight`           | `boolean`                                          | `false`       | Whether the glass is over a light background                                                         |
+| `mouseContainer`      | `Ref<HTMLElement>`                                 | `null`        | Container element to track mouse movement on (defaults to the glass component itself)                |
+| `mode`                | `"standard" \| "polar" \| "prominent" \| "shader"` | `"standard"`  | Refraction mode for different visual effects. `shader` is the most accurate but not the most stable. |
+| `globalMousePos`      | `{ x: number; y: number }`                         | -             | Global mouse position coordinates for manual control                                                 |
+| `mouseOffset`         | `{ x: number; y: number }`                         | -             | Mouse position offset for fine-tuning positioning                                                    |
+
+## Events
+
+| Event    | Type         | Description                                 |
+| -------- | ------------ | ------------------------------------------- |
+| `@click` | `() => void` | Emitted when the glass component is clicked |
+
+## Development
+
+This Vue implementation maintains the same visual effects and behavior as the original React version while utilizing Vue 3's reactive system and Composition API for optimal performance.
+
+### Credits
+
+- Original React implementation: [liquid-glass-react](https://github.com/rdev/liquid-glass-react) by [rdev](https://github.com/rdev)
+- Vue adaptation: Converted to Vue 3 with Composition API

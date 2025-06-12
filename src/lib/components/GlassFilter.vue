@@ -27,6 +27,9 @@ const getMap = (mode: "standard" | "polar" | "prominent" | "shader", shaderMapUr
 const scale = computed(() => {
     return props.mode === "shader" ? 1 : -1
 })
+const offset = computed(() => {
+    return `${Math.max(30, 80 - props.aberrationIntensity * 2)}%`
+})
 </script>
 
 <template>
@@ -34,7 +37,7 @@ const scale = computed(() => {
         <defs>
             <radialGradient :id="`${id}-edge-mask`" cx="50%" cy="50%" r="50%">
                 <stop offset="0%" stopColor="black" stopOpacity="0" />
-                <stop :offset="`${Math.max(30, 80 - aberrationIntensity * 2)}%`" stopColor="black" stopOpacity="0" />
+                <stop :offset="offset" stopColor="black" stopOpacity="0" />
                 <stop offset="100%" stopColor="white" stopOpacity="1" />
             </radialGradient>
             <filter :id="id" x="-35%" y="-35%" width="170%" height="170%" colorInterpolationFilters="sRGB">

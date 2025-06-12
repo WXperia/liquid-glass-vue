@@ -47,22 +47,22 @@ describe('GlassContainer', () => {
     })
   })
 
-  describe('组件渲染', () => {
-    it('应该正确渲染基本结构', () => {
+  describe('Component Rendering', () => {
+    it('should render basic structure correctly', () => {
       const wrapper = mount(GlassContainer, {
         props: defaultProps,
         slots: {
-          default: '测试内容',
+          default: 'Test Content',
         },
       })
 
       expect(wrapper.find('.relative').exists()).toBe(true)
       expect(wrapper.find('.glass').exists()).toBe(true)
       expect(wrapper.find('.glass__warp').exists()).toBe(true)
-      expect(wrapper.text()).toContain('测试内容')
+      expect(wrapper.text()).toContain('Test Content')
     })
 
-    it('应该正确应用className属性', () => {
+    it('should apply className property correctly', () => {
       const wrapper = mount(GlassContainer, {
         props: {
           ...defaultProps,
@@ -73,7 +73,7 @@ describe('GlassContainer', () => {
       expect(wrapper.find('.custom-class').exists()).toBe(true)
     })
 
-    it('应该在active为true时应用active类', () => {
+    it('should apply active class when active is true', () => {
       const wrapper = mount(GlassContainer, {
         props: {
           ...defaultProps,
@@ -84,7 +84,7 @@ describe('GlassContainer', () => {
       expect(wrapper.find('.active').exists()).toBe(true)
     })
 
-    it('应该在有onClick回调时应用cursor-pointer类', () => {
+    it('should apply cursor-pointer class when onClick callback exists', () => {
       const onClick = vi.fn()
       const wrapper = mount(GlassContainer, {
         props: {
@@ -97,8 +97,8 @@ describe('GlassContainer', () => {
     })
   })
 
-  describe('样式计算', () => {
-    it('应该正确计算backdrop样式', () => {
+  describe('Style Calculation', () => {
+    it('should calculate backdrop style correctly', () => {
       const wrapper = mount(GlassContainer, {
         props: defaultProps,
       })
@@ -106,17 +106,17 @@ describe('GlassContainer', () => {
       const backdrop = wrapper.find('.glass__warp')
       const style = backdrop.attributes('style')
 
-      // 调试输出
-      console.log('实际样式:', style)
+      // Debug output
+      console.log('Actual style:', style)
 
       expect(style).toContain('filter: url(#mock-id)')
-      // Vue可能将camelCase转换为kebab-case，或者样式没有完全渲染
+      // Vue may convert camelCase to kebab-case, or styles may not be fully rendered
       expect(
         style && (style.includes('backdrop-filter:') || style.includes('backdropFilter:')),
       ).toBe(true)
     })
 
-    it('应该在overLight为true时调整模糊值', () => {
+    it('should adjust blur value when overLight is true', () => {
       const wrapper = mount(GlassContainer, {
         props: {
           ...defaultProps,
@@ -129,15 +129,15 @@ describe('GlassContainer', () => {
 
       expect(style).toContain('backdrop-filter: blur(')
       expect(style).toContain('saturate(180%)')
-      // overLight模式下应该有更高的模糊值
+      // Should have higher blur value in overLight mode
       const blurMatch = style?.match(/blur\((\d+)px\)/)
       if (blurMatch) {
         const blurValue = parseInt(blurMatch[1])
-        expect(blurValue).toBeGreaterThan(400) // 应该大于标准模式
+        expect(blurValue).toBeGreaterThan(400) // Should be greater than standard mode
       }
     })
 
-    it('应该在Firefox中移除filter属性', () => {
+    it('should remove filter property in Firefox', () => {
       Object.defineProperty(window.navigator, 'userAgent', {
         writable: true,
         value: 'Mozilla/5.0 Firefox/89.0',
@@ -153,7 +153,7 @@ describe('GlassContainer', () => {
       expect(style).not.toContain('filter:')
     })
 
-    it('应该正确应用玻璃容器样式', () => {
+    it('should apply glass container styles correctly', () => {
       const wrapper = mount(GlassContainer, {
         props: {
           ...defaultProps,
@@ -169,7 +169,7 @@ describe('GlassContainer', () => {
       expect(style).toContain('padding: 16px 24px')
     })
 
-    it('应该在overLight为true时应用不同的阴影', () => {
+    it('should apply different shadow when overLight is true', () => {
       const wrapper = mount(GlassContainer, {
         props: {
           ...defaultProps,
@@ -184,8 +184,8 @@ describe('GlassContainer', () => {
     })
   })
 
-  describe('GlassFilter组件集成', () => {
-    it('应该正确传递props给GlassFilter', () => {
+  describe('GlassFilter Component Integration', () => {
+    it('should pass props to GlassFilter correctly', () => {
       const wrapper = mount(GlassContainer, {
         props: {
           ...defaultProps,
@@ -208,8 +208,8 @@ describe('GlassContainer', () => {
     })
   })
 
-  describe('shader模式', () => {
-    it('应该在shader模式下生成shader映射', async () => {
+  describe('Shader Mode', () => {
+    it('should generate shader map in shader mode', async () => {
       const wrapper = mount(GlassContainer, {
         props: {
           ...defaultProps,
@@ -217,7 +217,7 @@ describe('GlassContainer', () => {
         },
       })
 
-      // 触发props变化来更新shader
+      // Trigger props change to update shader
       await wrapper.setProps({
         glassSize: { width: 300, height: 100 },
       })
@@ -226,7 +226,7 @@ describe('GlassContainer', () => {
       expect(glassFilter.props('shaderMapUrl')).toBe('data:image/png;base64,mock-shader-data')
     })
 
-    it('应该在glassSize变化时重新生成shader', async () => {
+    it('should regenerate shader when glassSize changes', async () => {
       const wrapper = mount(GlassContainer, {
         props: {
           ...defaultProps,
@@ -243,8 +243,8 @@ describe('GlassContainer', () => {
     })
   })
 
-  describe('事件处理', () => {
-    it('应该正确处理点击事件', async () => {
+  describe('Event Handling', () => {
+    it('should handle click event correctly', async () => {
       const onClick = vi.fn()
       const wrapper = mount(GlassContainer, {
         props: {
@@ -257,7 +257,7 @@ describe('GlassContainer', () => {
       expect(onClick).toHaveBeenCalledTimes(1)
     })
 
-    it('应该正确处理鼠标悬停事件', async () => {
+    it('should handle mouse hover events correctly', async () => {
       const onMouseEnter = vi.fn()
       const onMouseLeave = vi.fn()
       const wrapper = mount(GlassContainer, {
@@ -276,7 +276,7 @@ describe('GlassContainer', () => {
       expect(onMouseLeave).toHaveBeenCalledTimes(1)
     })
 
-    it('应该正确处理鼠标按下和释放事件', async () => {
+    it('should handle mouse down and up events correctly', async () => {
       const onMouseDown = vi.fn()
       const onMouseUp = vi.fn()
       const wrapper = mount(GlassContainer, {
@@ -296,8 +296,8 @@ describe('GlassContainer', () => {
     })
   })
 
-  describe('文本样式', () => {
-    it('应该在overLight为false时应用文本阴影', () => {
+  describe('Text Styles', () => {
+    it('should apply text shadow when overLight is false', () => {
       const wrapper = mount(GlassContainer, {
         props: {
           ...defaultProps,
@@ -311,7 +311,7 @@ describe('GlassContainer', () => {
       expect(style).toContain('text-shadow: 0px 2px 12px rgba(0, 0, 0, 0.4)')
     })
 
-    it('应该在overLight为true时移除文本阴影', () => {
+    it('should remove text shadow when overLight is true', () => {
       const wrapper = mount(GlassContainer, {
         props: {
           ...defaultProps,
@@ -326,8 +326,8 @@ describe('GlassContainer', () => {
     })
   })
 
-  describe('组件暴露', () => {
-    it('应该暴露containerRef', () => {
+  describe('Component Exposure', () => {
+    it('should expose containerRef', () => {
       const wrapper = mount(GlassContainer, {
         props: defaultProps,
       })
@@ -336,8 +336,8 @@ describe('GlassContainer', () => {
     })
   })
 
-  describe('props默认值', () => {
-    it('应该使用正确的默认属性值', () => {
+  describe('Default Props', () => {
+    it('should use correct default prop values', () => {
       const wrapper = mount(GlassContainer)
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

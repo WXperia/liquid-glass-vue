@@ -13,8 +13,6 @@ const props = withDefaults(defineProps<LiquidGlassProps>(), {
   aberrationIntensity: 2,
   elasticity: 0.15,
   cornerRadius: 999,
-
-  className: "",
   padding: "24px 32px",
   overLight: false,
 
@@ -69,7 +67,7 @@ watchEffect(() => {
   }
 })
 
-const calculateDirectionalScale = () => {
+const calculateDirectionalScale = computed(() => {
   if (!globalMousePos.value.x || !globalMousePos.value.y || !glassRef.value) {
     return "scale(1)"
   }
@@ -118,9 +116,9 @@ const calculateDirectionalScale = () => {
   const scaleY = 1 + Math.abs(normalizedY) * stretchIntensity * 0.3 - Math.abs(normalizedX) * stretchIntensity * 0.15
 
   return `scaleX(${Math.max(0.8, scaleX)}) scaleY(${Math.max(0.8, scaleY)})`
-}
+})
 
-const calculateFadeInFactor = () => {
+const calculateFadeInFactor = computed(() => {
   if (!globalMousePos.value.x || !globalMousePos.value.y || !glassRef.value) {
     return 0
   }
@@ -137,15 +135,15 @@ const calculateFadeInFactor = () => {
 
   const activationZone = 200
   return edgeDistance > activationZone ? 0 : 1 - edgeDistance / activationZone
-}
+})
 
 // Helper function to calculate elastic translation
-const calculateElasticTranslation = () => {
+const calculateElasticTranslation = computed(() => {
   if (!glassRef.value) {
     return { x: 0, y: 0 }
   }
 
-  const fadeInFactor = calculateFadeInFactor()
+  const fadeInFactor = calculateFadeInFactor.value
   const rect = glassRef.value?.$el.getBoundingClientRect()
   const pillCenterX = rect.left + rect.width / 2
   const pillCenterY = rect.top + rect.height / 2
@@ -155,7 +153,7 @@ const calculateElasticTranslation = () => {
     y: (globalMousePos.value.y - pillCenterY) * props.elasticity * 0.1 * fadeInFactor,
   }
 }
-
+)
 // Update glass size whenever component mounts or window resizes
 watchEffect(() => {
   const updateGlassSize = () => {
@@ -170,7 +168,7 @@ watchEffect(() => {
   return () => window.removeEventListener("resize", updateGlassSize)
 })
 const transformStyle = computed(() => {
-  return `translate(calc(-50% + ${calculateElasticTranslation().x}px), calc(-50% + ${calculateElasticTranslation().y}px)) ${isActive.value && Boolean(props.onClick) ? "scale(0.96)" : calculateDirectionalScale()}`
+  return `translate(calc(-50% + ${calculateElasticTranslation.value.x}px), calc(-50% + ${calculateElasticTranslation.value.y}px)) ${isActive.value && Boolean(props.onClick) ? "scale(0.96)" : calculateDirectionalScale.value}`
 })
 
 const baseStyle = computed(() => {
@@ -213,7 +211,7 @@ const positionStyles = computed<Partial<CSSProperties>>(() => {
       transition: baseStyle.transition,
     }"></div>
 
-  <GlassContainer ref="glassRef" :class="className" :style="baseStyle" :cornerRadius="cornerRadius"
+  <GlassContainer ref="glassRef" v-bind="$attrs" :style="baseStyle" :cornerRadius="cornerRadius"
     :displacementScale="overLight ? displacementScale * 0.5 : displacementScale" :blurAmount="blurAmount"
     :saturation="saturation" :aberrationIntensity="aberrationIntensity" :glassSize="glassSize" :padding="padding"
     :mouseOffset="mouseOffset" :onMouseEnter="() => isHovered = true" :onMouseLeave="() => isHovered = false"
