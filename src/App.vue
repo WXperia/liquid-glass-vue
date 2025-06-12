@@ -2,6 +2,7 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import LiquidGlass from './lib/components/LiquidGlass.vue'
 import { GlassMode } from './lib/type'
+import type { FragmentShaderType } from './lib/shader-util'
 
 // 主题模式
 const isDarkMode = ref(true)
@@ -30,6 +31,17 @@ const logoutMode = ref<GlassMode>(GlassMode.standard)
 const activeTab = ref<'userInfo' | 'logOut'>('userInfo')
 const containerRef = ref<HTMLElement>()
 const scroll = ref(0)
+const effectList = ["flowingLiquid", 'liquidGlass', 'transparentIce', 'unevenGlass', 'mosaicGlass'] as FragmentShaderType[]
+const effect = ref<FragmentShaderType>(effectList[0])
+
+// Add effect display names mapping
+const effectNames = {
+  flowingLiquid: 'Flowing Liquid',
+  liquidGlass: 'Liquid Glass',
+  transparentIce: 'Transparent Ice',
+  unevenGlass: 'Uneven Glass',
+  mosaicGlass: 'Mosaic Glass'
+}
 
 const handleScroll = (event: Event) => {
   requestAnimationFrame(() => {
@@ -118,10 +130,10 @@ onMounted(() => {
         <img src="https://picsum.photos/1100/1200" class="w-full h-96 object-cover my-10 mb-96" />
       </div>
       <!-- User Info Card -->
-      <LiquidGlass v-if="activeTab === 'userInfo'" :displacementScale="displacementScale" :blurAmount="blurAmount"
-        :saturation="saturation" :aberrationIntensity="aberrationIntensity" :elasticity="elasticity"
-        :cornerRadius="cornerRadius" :mouseContainer="containerRef" :overLight="effectiveUserInfoOverLight"
-        :mode="userInfoMode" :style="{
+      <LiquidGlass v-if="activeTab === 'userInfo'" :effect="effect" :displacementScale="displacementScale"
+        :blurAmount="blurAmount" :saturation="saturation" :aberrationIntensity="aberrationIntensity"
+        :elasticity="elasticity" :cornerRadius="cornerRadius" :mouseContainer="containerRef"
+        :overLight="effectiveUserInfoOverLight" :mode="userInfoMode" :style="{
           position: 'fixed',
           top: '25%',
           left: '40%',
@@ -158,7 +170,7 @@ onMounted(() => {
       </LiquidGlass>
 
       <!-- Logout Button -->
-      <LiquidGlass v-if="activeTab === 'logOut'" :displacementScale="logoutDisplacementScale"
+      <LiquidGlass v-if="activeTab === 'logOut'" :effect="effect" :displacementScale="logoutDisplacementScale"
         :blurAmount="logoutBlurAmount" :saturation="logoutSaturation" :aberrationIntensity="logoutAberrationIntensity"
         :elasticity="logoutElasticity" :cornerRadius="logoutCornerRadius" :mouseContainer="containerRef"
         :overLight="effectiveLogoutOverLight" :mode="logoutMode" padding="8px 16px" :onClick="handleLogout" :style="{
@@ -224,7 +236,17 @@ onMounted(() => {
           Logout Button
         </button>
       </div>
-
+      <div>
+        <span :class="`block text-sm font-semibold mb-3 ${textClass}`">Effect Type</span>
+        <div class="space-y-2">
+          <div v-for="effectType in effectList" :key="effectType" class="flex items-center space-x-3">
+            <input type="radio" :id="`effect${effectType}`" name="effect" :value="effectType" v-model="effect"
+              class="w-4 h-4 accent-blue-500" />
+            <label :class="`text-sm ${textClass}`" :for="`effect${effectType}`">{{ effectNames[effectType] }}</label>
+          </div>
+        </div>
+        <p :class="`text-xs mt-2 ${textTertiaryClass}`">Select the liquid glass effect type</p>
+      </div>
       <div class="space-y-8 flex-1">
         <!-- 用户信息卡片控制 -->
         <template v-if="activeTab === 'userInfo'">
@@ -240,6 +262,16 @@ onMounted(() => {
                 <input type="radio" id="userInfoModePolar" name="userInfoMode" :value="GlassMode.polar"
                   v-model="userInfoMode" class="w-4 h-4 accent-blue-500" />
                 <label :class="`text-sm ${textClass}`" for="userInfoModePolar">Polar</label>
+              </div>
+              <div class="flex items-center space-x-3">
+                <input type="radio" id="userInfoModeProminent" name="userInfoMode" :value="GlassMode.prominent"
+                  v-model="userInfoMode" class="w-4 h-4 accent-blue-500" />
+                <label :class="`text-sm ${textClass}`" for="userInfoModeProminent">Prominent</label>
+              </div>
+              <div class="flex items-center space-x-3">
+                <input type="radio" id="userInfoModeShader" name="userInfoMode" :value="GlassMode.shader"
+                  v-model="userInfoMode" class="w-4 h-4 accent-blue-500" />
+                <label :class="`text-sm ${textClass}`" for="userInfoModeShader">Shader</label>
               </div>
             </div>
             <p :class="`text-xs mt-2 ${textTertiaryClass}`">Control the refraction calculation method</p>
@@ -418,7 +450,6 @@ onMounted(() => {
 </template>
 
 <style scoped>
-
 /* Custom scrollbar styles */
 ::-webkit-scrollbar {
   width: 8px;

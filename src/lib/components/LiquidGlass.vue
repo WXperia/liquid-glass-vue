@@ -211,7 +211,7 @@ const positionStyles = computed<Partial<CSSProperties>>(() => {
       transition: baseStyle.transition,
     }"></div>
 
-  <GlassContainer ref="glassRef" v-bind="$attrs" :style="baseStyle" :cornerRadius="cornerRadius"
+  <GlassContainer ref="glassRef" v-bind="$attrs" :effect="effect" :style="baseStyle" :cornerRadius="cornerRadius"
     :displacementScale="overLight ? displacementScale * 0.5 : displacementScale" :blurAmount="blurAmount"
     :saturation="saturation" :aberrationIntensity="aberrationIntensity" :glassSize="glassSize" :padding="padding"
     :mouseOffset="mouseOffset" :onMouseEnter="() => isHovered = true" :onMouseLeave="() => isHovered = false"

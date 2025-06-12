@@ -59,7 +59,7 @@ npm install @wxperia/liquid-glass-vue
 
 ```vue
 <script setup lang="ts">
-  import { LiquidGlass } from 'liquid-glass-vue'
+  import { LiquidGlass } from '@wxperia/liquid-glass-vue'
 
   const handleClick = () => {
     console.log('Button clicked!')
@@ -76,6 +76,8 @@ npm install @wxperia/liquid-glass-vue
     :corner-radius="100"
     padding="8px 16px"
     @click="handleClick"
+    :effect="mosaicGlass"
+    :mode="'shader'"
   >
     <span class="text-white font-medium">Click Me</span>
   </LiquidGlass>

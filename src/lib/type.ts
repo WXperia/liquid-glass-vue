@@ -1,4 +1,5 @@
 import { type CSSProperties, type VNode } from 'vue'
+import type { FragmentShaderType } from './shader-util'
 export enum GlassMode {
   standard = 'standard',
   polar = 'polar',
@@ -33,7 +34,8 @@ export interface GlassContainerProps {
   padding?: string
   glassSize?: { width: number; height: number }
   onClick?: () => void
-  mode?: GlassMode
+  mode?: GlassMode,
+  effect?: FragmentShaderType
 }
 
 export interface LiquidGlassProps {
@@ -51,5 +53,6 @@ export interface LiquidGlassProps {
   style?: Partial<CSSProperties>
   overLight?: boolean
   mode?: GlassMode
-  onClick?: () => void
+  onClick?: () => void,
+  effect?: FragmentShaderType
 }

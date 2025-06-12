@@ -14,7 +14,8 @@ const props = withDefaults(defineProps<GlassContainerProps>(), {
     cornerRadius: 999,
     padding: "24px 32px",
     glassSize: () => ({ width: 270, height: 69 }),
-    mode: GlassMode.standard
+    mode: GlassMode.standard,
+    effect: "liquidGlass"
 })
 const shaderMapUrl = ref<string>("")
 const isFirefox = window.navigator.userAgent.toLowerCase().includes("firefox")
@@ -24,7 +25,7 @@ const generateShaderDisplacementMap = (width: number, height: number): string =>
     const generator = new ShaderDisplacementGenerator({
         width,
         height,
-        fragment: fragmentShaders.liquidGlass,
+        fragment: fragmentShaders[props.effect],
     })
 
     const dataUrl = generator.updateShader()
@@ -32,7 +33,7 @@ const generateShaderDisplacementMap = (width: number, height: number): string =>
 
     return dataUrl
 }
-watch(() => [props.mode, props.glassSize.width, props.glassSize.height], () => {
+watch(() => [props.mode, props.glassSize.width, props.glassSize.height, props.effect], () => {
     if (props.mode === "shader") {
         const url = generateShaderDisplacementMap(props.glassSize.width, props.glassSize.height)
         shaderMapUrl.value = url
