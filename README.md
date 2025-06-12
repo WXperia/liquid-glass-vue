@@ -84,7 +84,7 @@ npm install liquid-glass-vue
 
 ### Mouse Container Example
 
-When you want the glass effect to respond to mouse movement over a larger area (like a parent container), use the `mouseContainer` prop:
+When you want the glass effect to respond to mouse movement over a larger area (like a parent container), use the `mouseContainer ` prop:
 
 ```vue
 <script setup lang="ts">
