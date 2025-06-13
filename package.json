@@ -1,6 +1,6 @@
 {
   "name": "@wxperia/liquid-glass-vue",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Apple's Liquid Glass effect for Vue 3. Based on the original liquid-glass-react library.",
   "keywords": [
     "vue",
