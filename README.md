@@ -4,6 +4,8 @@ Apple's Liquid Glass effect for Vue 3.
 
 > **📝 Note:** This Vue implementation is based on the original [liquid-glass-react](https://github.com/rdev/liquid-glass-react) library. All core effects and algorithms have been adapted from the React version to work with Vue 3's Composition API.
 
+**[中文](./README-zh.md)**
+
 |                                Card Example                                |                                Button Example                                |
 | :------------------------------------------------------------------------: | :--------------------------------------------------------------------------: |
 | ![](https://github.com/rdev/liquid-glass-react/raw/master/assets/card.png) | ![](https://github.com/rdev/liquid-glass-react/raw/master/assets/button.png) |
