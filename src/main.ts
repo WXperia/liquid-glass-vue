@@ -1,4 +1,5 @@
 import { createApp } from 'vue'
+import LiquidGlass from './lib'
 import App from './App.vue'
 import './index.css'
-createApp(App).mount('#app')
+createApp(App).use(LiquidGlass).mount('#app')

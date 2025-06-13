@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
-import LiquidGlass from './lib/components/LiquidGlass.vue'
+
 import { GlassMode } from './lib/type'
 import type { FragmentShaderType } from './lib/shader-util'
 
@@ -28,10 +28,10 @@ const logoutOverLight = ref(false)
 const logoutMode = ref<GlassMode>(GlassMode.standard)
 
 // 共享状态
-const activeTab = ref<'userInfo' | 'logOut'>('userInfo')
+const activeTab = ref<'userInfo' | 'logOut' | 'Directive'>('userInfo')
 const containerRef = ref<HTMLElement>()
 const scroll = ref(0)
-const effectList = ["flowingLiquid", 'liquidGlass', 'transparentIce', 'unevenGlass', 'mosaicGlass'] as FragmentShaderType[]
+const effectList = ["flowingLiquid", 'liquidGlass', 'transparentIce', 'unevenGlass', 'mosaicGlass', 'liquidGlass2'] as FragmentShaderType[]
 const effect = ref<FragmentShaderType>(effectList[0])
 
 // Add effect display names mapping
@@ -40,7 +40,8 @@ const effectNames = {
   liquidGlass: 'Liquid Glass',
   transparentIce: 'Transparent Ice',
   unevenGlass: 'Uneven Glass',
-  mosaicGlass: 'Mosaic Glass'
+  mosaicGlass: 'Mosaic Glass',
+  liquidGlass2: 'Liquid Glass 2'
 }
 
 const handleScroll = (event: Event) => {
@@ -186,6 +187,7 @@ onMounted(() => {
           </svg>
         </h3>
       </LiquidGlass>
+
     </div>
 
     <!-- 右侧面板 - 控制面板 -->
@@ -236,21 +238,24 @@ onMounted(() => {
           Logout Button
         </button>
       </div>
-      <div>
-        <span :class="`block text-sm font-semibold mb-3 ${textClass}`">Effect Type</span>
-        <div class="space-y-2">
-          <div v-for="effectType in effectList" :key="effectType" class="flex items-center space-x-3">
-            <input type="radio" :id="`effect${effectType}`" name="effect" :value="effectType" v-model="effect"
-              class="w-4 h-4 accent-blue-500" />
-            <label :class="`text-sm ${textClass}`" :for="`effect${effectType}`">{{ effectNames[effectType] }}</label>
-          </div>
-        </div>
-        <p :class="`text-xs mt-2 ${textTertiaryClass}`">Select the liquid glass effect type</p>
-      </div>
+
       <div class="space-y-8 flex-1">
         <!-- 用户信息卡片控制 -->
         <template v-if="activeTab === 'userInfo'">
           <div>
+            <span :class="`block text-sm font-semibold mb-3 ${textClass}`">Effect Type</span>
+            <div class="space-y-2">
+              <div v-for="effectType in effectList" :key="effectType" class="flex items-center space-x-3">
+                <input type="radio" :id="`effect${effectType}`" name="effect" :value="effectType" v-model="effect"
+                  class="w-4 h-4 accent-blue-500" />
+                <label :class="`text-sm ${textClass}`" :for="`effect${effectType}`">{{ effectNames[effectType]
+                }}</label>
+              </div>
+            </div>
+            <p :class="`text-xs mt-2 ${textTertiaryClass}`">Select the liquid glass effect type</p>
+          </div>
+          <div>
+
             <span :class="`block text-sm font-semibold mb-3 ${textClass}`">Refraction Mode</span>
             <div class="space-y-2">
               <div class="flex items-center space-x-3">
@@ -332,7 +337,7 @@ onMounted(() => {
             <span :class="`block text-sm font-semibold mb-3 ${textClass}`">Corner Radius</span>
             <div class="mb-2">
               <span class="text-xl font-mono text-pink-500">{{ cornerRadius === 999 ? "完全" : `${cornerRadius}px`
-                }}</span>
+              }}</span>
             </div>
             <input type="range" min="0" max="100" step="1" v-model="cornerRadius"
               :class="`w-full ${isDarkMode ? 'bg-white/10' : 'bg-gray-200'}`" />

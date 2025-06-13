@@ -1,7 +1,8 @@
 <script setup lang="ts" name="GlassContainer">
 import { useId, ref, watch, computed, type CSSProperties } from 'vue'
 import { GlassMode, type GlassContainerProps } from '../type'
-import { fragmentShaders, ShaderDisplacementGenerator } from '../shader-util';
+import { ShaderDisplacementGenerator } from '../shader-util';
+
 import GlassFilter from './GlassFilter.vue'
 const props = withDefaults(defineProps<GlassContainerProps>(), {
     className: "",
@@ -21,21 +22,21 @@ const shaderMapUrl = ref<string>("")
 const isFirefox = window.navigator.userAgent.toLowerCase().includes("firefox")
 const filterId = useId()
 // Generate shader-based displacement map using shaderUtils
-const generateShaderDisplacementMap = (width: number, height: number): string => {
+const generateShaderDisplacementMap = async (width: number, height: number) => {
     const generator = new ShaderDisplacementGenerator({
         width,
         height,
-        fragment: fragmentShaders[props.effect],
+        effect: props.effect,
     })
 
-    const dataUrl = generator.updateShader()
+    const dataUrl = await generator.updateShader()
     generator.destroy()
 
     return dataUrl
 }
-watch(() => [props.mode, props.glassSize.width, props.glassSize.height, props.effect], () => {
+watch(() => [props.mode, props.glassSize.width, props.glassSize.height, props.effect], async () => {
     if (props.mode === "shader") {
-        const url = generateShaderDisplacementMap(props.glassSize.width, props.glassSize.height)
+        const url = await generateShaderDisplacementMap(props.glassSize.width, props.glassSize.height)
         shaderMapUrl.value = url
     }
 })
