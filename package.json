@@ -52,7 +52,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "vue": "^3.5.13"
+    "vue": "^3.1.13"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.16",
