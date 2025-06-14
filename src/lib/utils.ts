@@ -26,3 +26,11 @@ export function isObjectEqual(obj1: Object, obj2: Object | undefined | null): bo
   if (keys1.length !== keys2.length) return false
   return keys1.every((key) => obj1[key] === obj2[key])
 }
+
+export function uuid(): string {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0
+    const v = c === 'x' ? r : (r & 0x3 | 0x8)
+    return v.toString(16)
+  })
+}

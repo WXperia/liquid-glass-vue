@@ -1,9 +1,10 @@
 <script setup lang="ts" name="GlassContainer">
-import { useId, ref, watch, computed, type CSSProperties } from 'vue'
+import { ref, watch, computed, type CSSProperties } from 'vue'
 import { GlassMode, type GlassContainerProps } from '../type'
 import { ShaderDisplacementGenerator } from '../shader-util';
 
 import GlassFilter from './GlassFilter.vue'
+import { uuid } from '../utils';
 const props = withDefaults(defineProps<GlassContainerProps>(), {
     className: "",
     displacementScale: 25,
@@ -20,7 +21,7 @@ const props = withDefaults(defineProps<GlassContainerProps>(), {
 })
 const shaderMapUrl = ref<string>("")
 const isFirefox = window.navigator.userAgent.toLowerCase().includes("firefox")
-const filterId = useId()
+const filterId = uuid()
 // Generate shader-based displacement map using shaderUtils
 const generateShaderDisplacementMap = async (width: number, height: number) => {
     const generator = new ShaderDisplacementGenerator({
