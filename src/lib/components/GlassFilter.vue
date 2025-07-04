@@ -1,7 +1,8 @@
 <script lang="ts" setup>
-import { computed, type CSSProperties } from 'vue';
+import { computed, ref, type CSSProperties } from 'vue';
 import type { GlassFilterProps } from '../type'
-import { autoPx, displacementMap, polarDisplacementMap, prominentDisplacementMap } from '../utils';
+import { autoPx } from '../utils';
+import { displacementMap, polarDisplacementMap, prominentDisplacementMap } from '../shader-image';
 const props = defineProps<GlassFilterProps>()
 const customFilterStyle = computed<Partial<CSSProperties>>(() => {
     return {
@@ -30,10 +31,14 @@ const scale = computed(() => {
 const offset = computed(() => {
     return `${Math.max(30, 80 - props.aberrationIntensity * 2)}%`
 })
+const mousePosition = ref({ x: 0, y: 0 })
+const onMouseMove = (e: MouseEvent) => {
+    mousePosition.value = { x: e.clientX, y: e.clientY }
+}
 </script>
 
 <template>
-    <svg :style="customFilterStyle" aria-hidden="true">
+    <svg @mousemove="onMouseMove" :style="customFilterStyle" aria-hidden="true">
         <defs>
             <radialGradient :id="`${id}-edge-mask`" cx="50%" cy="50%" r="50%">
                 <stop offset="0%" stopColor="black" stopOpacity="0" />
@@ -43,7 +48,6 @@ const offset = computed(() => {
             <filter :id="id" x="-35%" y="-35%" width="170%" height="170%" colorInterpolationFilters="sRGB">
                 <feImage id="feimage" x="0" y="0" width="100%" height="100%" result="DISPLACEMENT_MAP"
                     :href="getMap(mode, shaderMapUrl)" preserveAspectRatio="xMidYMid slice" />
-
                 <!-- {/* Create edge mask using the displacement map itself */} -->
                 <feColorMatrix in="DISPLACEMENT_MAP" type="matrix" values="0.3 0.3 0.3 0 0
                  0.3 0.3 0.3 0 0

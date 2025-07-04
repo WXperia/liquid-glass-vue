@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import BaseUsage from './BaseUsage.vue'
 import { ref, computed, watch, onMounted } from 'vue'
 
 import { GlassMode } from './lib/type'
@@ -108,6 +109,7 @@ onMounted(() => {
 </script>
 
 <template>
+  <BaseUsage />
   <div
     :class="`grid grid-cols-3 shadow-2xl w-full max-w-5xl mx-auto my-10 h-screen max-h-[calc(100vh-5rem)] rounded-3xl overflow-hidden font-sans ${themeClass}`">
 

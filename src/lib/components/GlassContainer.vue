@@ -1,10 +1,11 @@
 <script setup lang="ts" name="GlassContainer">
-import { ref, watch, computed, type CSSProperties } from 'vue'
+import { ref, watch, computed, onUnmounted, type CSSProperties } from 'vue'
 import { GlassMode, type GlassContainerProps } from '../type'
 import { ShaderDisplacementGenerator } from '../shader-util';
 
 import GlassFilter from './GlassFilter.vue'
 import { uuid } from '../utils';
+
 const props = withDefaults(defineProps<GlassContainerProps>(), {
     className: "",
     displacementScale: 25,
@@ -19,9 +20,14 @@ const props = withDefaults(defineProps<GlassContainerProps>(), {
     mode: GlassMode.standard,
     effect: "liquidGlass"
 })
+
 const shaderMapUrl = ref<string>("")
 const isFirefox = window.navigator.userAgent.toLowerCase().includes("firefox")
 const filterId = uuid()
+
+// Track blob URLs for cleanup
+const blobUrls = new Set<string>()
+
 // Generate shader-based displacement map using shaderUtils
 const generateShaderDisplacementMap = async (width: number, height: number) => {
     const generator = new ShaderDisplacementGenerator({
@@ -33,13 +39,40 @@ const generateShaderDisplacementMap = async (width: number, height: number) => {
     const dataUrl = await generator.updateShader()
     generator.destroy()
 
+    // Track blob URLs for cleanup
+    if (dataUrl.startsWith('blob:')) {
+        blobUrls.add(dataUrl)
+    }
+
     return dataUrl
 }
+
+// Clean up previous blob URL before setting new one
+const cleanupPreviousBlob = () => {
+    if (shaderMapUrl.value && shaderMapUrl.value.startsWith('blob:')) {
+        URL.revokeObjectURL(shaderMapUrl.value)
+        blobUrls.delete(shaderMapUrl.value)
+    }
+}
+
 watch(() => [props.mode, props.glassSize.width, props.glassSize.height, props.effect], async () => {
     if (props.mode === "shader") {
+        cleanupPreviousBlob()
         const url = await generateShaderDisplacementMap(props.glassSize.width, props.glassSize.height)
         shaderMapUrl.value = url
     }
+})
+
+// Cleanup on unmount
+onUnmounted(() => {
+    // Clean up all blob URLs
+    blobUrls.forEach(url => {
+        URL.revokeObjectURL(url)
+    })
+    blobUrls.clear()
+
+    // Clean up current shader map URL
+    cleanupPreviousBlob()
 })
 
 const backdropStyle = computed<Partial<CSSProperties>>(() => {
@@ -48,8 +81,6 @@ const backdropStyle = computed<Partial<CSSProperties>>(() => {
         backdropFilter: `blur(${(props.overLight ? 12 : 4) + props.blurAmount * 32}px) saturate(${props.saturation}%)`,
     }
 })
-
-
 
 </script>
 

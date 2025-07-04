@@ -48,39 +48,75 @@ function fbm(x: number, y: number, octaves: number = 4): number {
 
 // Shader fragment functions
 const fragmentShaders = {
-  liquidGlass: (uv: Vec2): Vec2 => {
+  liquidGlass: (uv: Vec2, mousePosition?: Vec2, time?: number): Vec2 => {
     const ix = uv.x - 0.5
     const iy = uv.y - 0.5
+
+    // Add mouse interaction
+    let mouseInfluence = 0
+    if (mousePosition) {
+      const mouseDistance = length(uv.x - mousePosition.x, uv.y - mousePosition.y)
+      mouseInfluence = smoothStep(0.3, 0, mouseDistance) * 0.5
+    }
+
     const distanceToEdge = roundedRectSDF(ix, iy, 0.3, 0.2, 0.6)
     const displacement = smoothStep(0.8, 0, distanceToEdge - 0.15)
-    const scaled = smoothStep(0, 1, displacement)
+    const scaled = smoothStep(0, 1, displacement) * (1 + mouseInfluence)
     return texture(ix * scaled + 0.5, iy * scaled + 0.5)
   },
-  flowingLiquid: (uv: Vec2): Vec2 => {
+  flowingLiquid: (uv: Vec2, mousePosition?: Vec2, time?: number): Vec2 => {
     const ix = uv.x - 0.5
     const iy = uv.y - 0.5
+
+    // Add mouse interaction with ripple effect
+    let mouseRipple = 0
+    if (mousePosition && time) {
+      const mouseDistance = length(uv.x - mousePosition.x, uv.y - mousePosition.y)
+      const ripplePhase = mouseDistance * 20 - time * 5
+      mouseRipple = smoothStep(0.4, 0, mouseDistance) * Math.sin(ripplePhase) * 0.1
+    }
+
     const distanceToEdge = roundedRectSDF(ix, iy, 0.3, 0.2, 1)
     const displacement = smoothStep(0.8, 0, distanceToEdge - 0.15)
-    const scaled = smoothStep(0, 1, displacement)
+    const scaled = smoothStep(0, 1, displacement) + mouseRipple
     return texture(ix * scaled + 0.5, iy * scaled + 0.5)
   },
-  transparentIce: (uv: Vec2): Vec2 => {
+  transparentIce: (uv: Vec2, mousePosition?: Vec2, time?: number): Vec2 => {
     const ix = uv.x - 0.5
     const iy = uv.y - 0.5
     const crystalNoise = fbm(uv.x * 8, uv.y * 8, 3) * 0.05
     const fineDetail = noise(uv.x * 20, uv.y * 20) * 0.02
+
+    // Add mouse-induced cracking effect
+    let mouseCrack = 0
+    if (mousePosition) {
+      const mouseDistance = length(uv.x - mousePosition.x, uv.y - mousePosition.y)
+      mouseCrack = smoothStep(0.2, 0, mouseDistance) * 0.3
+    }
+
     const distanceToEdge = roundedRectSDF(ix, iy, 0.35, 0.25, 0.3)
     const iceMask = smoothStep(0.5, -0.2, distanceToEdge)
-    const crackPattern = Math.sin(uv.x * 15 + crystalNoise * 10) * Math.cos(uv.y * 12) * 0.03
+    const crackPattern = Math.sin(uv.x * 15 + crystalNoise * 10) * Math.cos(uv.y * 12) * 0.03 * (1 + mouseCrack)
     const distortionX = ix + (crystalNoise + fineDetail + crackPattern) * iceMask
     const distortionY = iy + (crystalNoise * 0.8 + fineDetail) * iceMask
     const edgeEffect = smoothStep(0, 0.1, distanceToEdge) * 0.1
     return texture(distortionX * (1 - edgeEffect) + 0.5, distortionY * (1 - edgeEffect) + 0.5)
   },
-  unevenGlass: (uv: Vec2): Vec2 => {
+  unevenGlass: (uv: Vec2, mousePosition?: Vec2, time?: number): Vec2 => {
     const ix = uv.x - 0.5
     const iy = uv.y - 0.5
-    const surfaceWarp = fbm(uv.x * 3, uv.y * 3, 2) * 0.08
+
+    // Add mouse warping effect
+    let mouseWarp = 0
+    if (mousePosition) {
+      const mouseDx = uv.x - mousePosition.x
+      const mouseDy = uv.y - mousePosition.y
+      const mouseDistance = length(mouseDx, mouseDy)
+      const mouseEffect = smoothStep(0.3, 0, mouseDistance)
+      mouseWarp = mouseEffect * 0.15
+    }
+
+    const surfaceWarp = fbm(uv.x * 3, uv.y * 3, 2) * 0.08 * (1 + mouseWarp)
     const surfaceDetail = noise(uv.x * 6 + surfaceWarp, uv.y * 6) * 0.04
     const warpedX = ix + surfaceWarp * 0.3
     const warpedY = iy + surfaceWarp * 0.3
@@ -92,7 +128,7 @@ const fragmentShaders = {
     const finalY = iy + (surfaceWarp * 0.9 + surfaceDetail + ripples * 0.7) * distortionStrength
     return texture(finalX + 0.5, finalY + 0.5)
   },
-  mosaicGlass: (uv: Vec2): Vec2 => {
+  mosaicGlass: (uv: Vec2, mousePosition?: Vec2, time?: number): Vec2 => {
     const ix = uv.x - 0.5
     const iy = uv.y - 0.5
     const tileSize = 0.05
@@ -101,8 +137,16 @@ const fragmentShaders = {
     const tileSeed = Math.sin(tileX * 12.9898 + tileY * 78.233) * 43758.5453
     const tileRandom = tileSeed - Math.floor(tileSeed)
     const tileAngle = tileRandom * Math.PI * 2
-    const refractionX = Math.cos(tileAngle) * 0.03
-    const refractionY = Math.sin(tileAngle) * 0.03
+
+    // Add mouse interaction with tile displacement
+    let mouseEffect = 1
+    if (mousePosition) {
+      const mouseDistance = length(uv.x - mousePosition.x, uv.y - mousePosition.y)
+      mouseEffect = 1 + smoothStep(0.2, 0, mouseDistance) * 0.8
+    }
+
+    const refractionX = Math.cos(tileAngle) * 0.03 * mouseEffect
+    const refractionY = Math.sin(tileAngle) * 0.03 * mouseEffect
     const distanceToEdge = roundedRectSDF(ix, iy, 0.35, 0.25, 0.05)
     const glassMask = smoothStep(0.4, -0.1, distanceToEdge)
     const localX = (uv.x % tileSize) / tileSize
@@ -131,8 +175,8 @@ const fragmentShaders = {
 }
 
 // Worker message handler
-self.onmessage = (e: MessageEvent) => {
-  const { width, height, effect, mousePosition, time } = e.data
+self.onmessage = async (e: MessageEvent) => {
+  const { width, height, effect, mousePosition, time, returnBlob } = e.data
 
   const w = width
   const h = height
@@ -143,7 +187,7 @@ self.onmessage = (e: MessageEvent) => {
   for (let y = 0; y < h; y++) {
     for (let x = 0; x < w; x++) {
       const uv: Vec2 = { x: x / w, y: y / h }
-      const pos = fragmentShaders[effect](uv, mousePosition, time)
+      const pos = fragmentShaders[effect as keyof typeof fragmentShaders](uv, mousePosition, time)
       const dx = pos.x * w - x
       const dy = pos.y * h - y
 
@@ -187,7 +231,27 @@ self.onmessage = (e: MessageEvent) => {
     }
   }
 
-  // Send the result back to the main thread
+  // If returnBlob is true and OffscreenCanvas is available, use offscreen rendering
+  if (returnBlob && typeof OffscreenCanvas !== 'undefined') {
+    try {
+      const offscreenCanvas = new OffscreenCanvas(w, h)
+      const ctx = offscreenCanvas.getContext('2d')
+
+      if (ctx) {
+        ctx.putImageData(imageData, 0, 0)
+        const blob = await offscreenCanvas.convertToBlob()
+
+        // @ts-expect-error
+        self.postMessage({ blob }, [])
+        return
+      }
+    } catch (error) {
+      // Fallback to imageData if OffscreenCanvas fails
+      console.warn('OffscreenCanvas failed, falling back to ImageData:', error)
+    }
+  }
+
+  // Send the imageData back to the main thread (fallback or when returnBlob is false)
   // @ts-expect-error
   self.postMessage({ imageData }, [imageData.data.buffer])
 }
