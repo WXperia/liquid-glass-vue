@@ -43,7 +43,7 @@ npm install @wxperia/liquid-glass-vue
 ### Global Usage
 
 ```ts
-import LiquidGlass from 'liquid-glass-vue'
+import LiquidGlass from '@wxperia/liquid-glass-vue'
 import { createApp } from 'vue'
 
 const app = createApp()
@@ -68,7 +68,7 @@ app.use(LiquidGlass)
 
 ```vue
 <script setup lang="ts">
-  import { LiquidGlass } from 'liquid-glass-vue'
+  import { LiquidGlass } from '@wxperia/liquid-glass-vue'
 </script>
 
 <template>
@@ -117,7 +117,7 @@ When you want the glass effect to respond to mouse movement over a larger area (
 ```vue
 <script setup lang="ts">
   import { ref } from 'vue'
-  import { LiquidGlass } from 'liquid-glass-vue'
+  import { LiquidGlass } from '@wxperia/liquid-glass-vue'
 
   const containerRef = ref<HTMLDivElement>()
 </script>
